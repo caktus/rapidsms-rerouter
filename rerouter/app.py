@@ -5,6 +5,15 @@ from rapidsms.models import Connection, Backend
 
 
 class Rerouter(AppBase):
+
+    def __init__(self, *args, **kwargs):
+        if hasattr(settings, 'REROUTE'):
+            routes = []
+            for key, val in settings.REROUTE.iteritems():
+                routes.append('%s -> %s' % (key, val))
+            self.info('Rerouter enabled: %s' % ', '.join(routes))
+        super(Rerouter, self).__init__(*args, **kwargs)
+
     def outgoing(self, msg):
         if hasattr(settings, 'REROUTE'):
             backend = msg.connection.backend
